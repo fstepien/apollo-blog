@@ -18,7 +18,10 @@ export default class NewPost extends Component {
       <Fragment>
         <h1>New Post</h1>
         <Mutation mutation={NEW_POST}>
-          {createPost => <PostForm onSubmit={createPost} />}
+          {createPost => {
+            const onSuccess = () => this.props.history.push("/");
+            return <PostForm onSubmit={createPost} onSuccess={onSuccess} />;
+          }}
         </Mutation>
       </Fragment>
     );

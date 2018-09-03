@@ -1,53 +1,65 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 export default class PostForm extends Component {
-  state = {
-    title: "",
-    body: ""
+  static propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+    post: PropTypes.object
   };
+
+  static defaultProps = {
+    post: {},
+    onSuccess: () => null
+  };
+
+  state = {
+    id: this.props.post.id || "",
+    title: this.props.post.title || "",
+    body: this.props.post.body || ""
+  };
+
   handleInput = e => {
     const formData = {};
     formData[e.target.name] = e.target.value;
     this.setState({ ...formData });
   };
+
   render() {
-    const { title, body } = this.state;
-    const { onSubmit } = this.props;
+    const { onSubmit, onSuccess } = this.props;
+    const { title, body, id } = this.state;
     return (
       <form
         onSubmit={e => {
-          e.preventDefault;
+          e.preventDefault();
           onSubmit({
             variables: {
               title,
-              body
+              body,
+              id
             }
           })
             .then(() => {
-              this.setState({
-                title: "",
-                body: ""
-              });
+              onSuccess();
             })
-            .catch(e => console.warn(e));
+
+            .catch(e => console.log(e));
         }}
       >
         <input
-          type="text"
-          value={title}
           name="title"
+          type="text"
           onChange={this.handleInput}
+          value={title}
           placeholder="title"
         />
         <textarea
-          type="text"
-          value={body}
           name="body"
-          onChange={this.handleInput}
           type="text"
+          onChange={this.handleInput}
+          value={body}
           placeholder="body"
         />
-        <button>Submit</button>
+        <button className="button">Submit</button>
       </form>
     );
   }
